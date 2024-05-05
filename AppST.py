@@ -355,7 +355,7 @@ dv_t &= \kappa (\theta - v_t) \, dt + \sigma \sqrt{v_t} \, dW_t^{(2)}, \\
         st.write(f"The Heston model price is: ${price:.2f}")
 
 
-# In[87]:
+# In[100]:
 
 
 def show_second_page():
@@ -370,20 +370,20 @@ dv_t &= \kappa (\theta - v_t) \, dt + \sigma \sqrt{v_t} \, dW_t^{(2)}, \\
 ''')
 
 
-    S0 = st.number_input("Spot Price (S0) [Bates]", value=100.0)
-    K = st.number_input("Strike Price (K) [Bates]", value=100.0)
-    T = st.number_input("Time to Maturity (T in years) [Bates]", value=1.0)
-    r = st.number_input("Risk-Free Rate (r) [Bates]", value=0.05)
-    d = st.number_input("Dividend Yield (d) [Bates]", value=0.02)  
+    S0 = st.number_input("Spot Price (S0)", value=100.0)
+    K = st.number_input("Strike Price (K)", value=100.0)
+    T = st.number_input("Time to Maturity (T in years)", value=1.0)
+    r = st.number_input("Risk-Free Rate (r)", value=0.05)
+    d = st.number_input("Dividend Yield (d)", value=0.02)  
     r_m_d = r - d 
-    kappa = st.number_input("Mean Reversion Rate (kappa) [Bates]", value=2.0)
-    v0 = st.number_input("Initial Variance (v0) [Bates]", value=0.04)
-    theta = st.number_input("Long-Term Variance (theta) [Bates]", value=0.2)
-    sigma = st.number_input("Volatility of Volatility (sigma) [Bates]", value=0.2)
-    rho = st.number_input("Correlation between Stock and Variance (rho) [Bates]", value=-0.6)
-    lambda_ = st.number_input("Jump Intensity (lambda) [Bates]", value=0.1)
-    mu_J = st.number_input("Mean of Jump Size (mu_J) [Bates]", value=0.05)
-    delta_J = st.number_input("Volatility of Jump (delta_J) [Bates]", value=0.1)
+    kappa = st.number_input("Mean Reversion Rate (kappa)", value=2.0)
+    v0 = st.number_input("Initial Variance (v0)", value=0.04)
+    theta = st.number_input("Long-Term Variance (theta)", value=0.2)
+    sigma = st.number_input("Volatility of Volatility (sigma)", value=0.2)
+    rho = st.number_input("Correlation between Stock and Variance (rho)", value=-0.6)
+    lambda_ = st.number_input("Jump Intensity (lambda)", value=0.1)
+    mu_J = st.number_input("Mean of Jump Size (mu_J)", value=0.05)
+    delta_J = st.number_input("Volatility of Jump (delta_J)", value=0.1)
     if st.button("Calculate Bates Price"):
         price = bates_price(S0, K, T, r_m_d, kappa, v0, theta, sigma, rho, lambda_, mu_J, delta_J)
         st.write(f"The Bates model price is: ${price:.2f}")
@@ -456,7 +456,7 @@ def show_black_scholes():
         st.write(f"The {option_type} option price is: ${price:.2f}")
 
 
-# In[90]:
+# In[103]:
 
 
 def show_excel_processor():
@@ -545,7 +545,7 @@ def show_excel_processor():
             st.plotly_chart(fig, use_container_width=True)
 
 
-            space1, col1, col2, col3, space2 = st.columns([2,2,2,2,1])
+            space1, col1, space3, col2, space4, col3, space2 = st.columns([2,2,1,2,1,2,1])
 
             with space1:
                 pass 
@@ -553,6 +553,7 @@ def show_excel_processor():
             with col1:
                 with st.container():
                     button_heston = st.button("Calibrate the Heston Model")
+                    st.write("Estimated time: 2 minutes")
                     st.latex(r'''
                     \begin{align*}
                     \frac{dS_t}{S_t} &= (r - d) \, dt + \sqrt{v_t} \, dW_t^{(1)}, \\
@@ -560,10 +561,13 @@ def show_excel_processor():
                     \rho \, dt &= dW_t^{(1)} \cdot dW_t^{(2)}
                     \end{align*}
                     ''')
+            with space3:
+                pass
 
             with col2:
                 with st.container():
                     button_bates = st.button("Calibrate the Bates Model")
+                    st.write("Estimated time: 4 minutes")
                     st.latex(r'''
                     \begin{align*}
                     \frac{dS_t}{S_t} &= (r - d) \, dt + \sqrt{v_t} \, dW_t^{(1)} + dJ_t, \\
@@ -571,10 +575,13 @@ def show_excel_processor():
                     \rho \, dt &= dW_t^{(1)} \cdot dW_t^{(2)}
                     \end{align*}
                     ''')
+            with space4:
+                pass
 
             with col3:
                 with st.container():
                     button_double = st.button("Calibrate the Double Model")
+                    st.write("Estimated time: 6 minutes")
                     st.latex(r'''
                     \begin{align*}
                     \frac{dS_t}{S_t} &= (r-d) \, dt + \sqrt{v_{1,t}} \, dW_t^{(1)} + \sqrt{v_{2,t}} \, dW_t^{(2)}, \\
@@ -650,6 +657,7 @@ def show_excel_processor():
                 graph_heston_vs_price(Price, Price_Heston)
                 IV_heston = [calculate_implied_volatility(Price_Heston_iv[i], S0, K_h[i], r_m_d, T_h[i], 10**-6, "call") for i in range(len(T_h))]
                 graph_heston_vs_market_iv(IV_h, IV_heston)
+                plot_K_fair_volatility("Heston", params_heston)
             
             if button_bates:
                 progress_bar = st.progress(0)
@@ -717,6 +725,7 @@ def show_excel_processor():
                 graph_heston_vs_price(Price, Price_Bates)
                 IV_heston = [calculate_implied_volatility(Price_Bates_iv[i], S0, K_h[i], r_m_d, T_h[i], 10**-6, "call") for i in range(len(T_h))]
                 graph_heston_vs_market_iv(IV_h, IV_heston)
+                plot_K_fair_volatility("Bates", params_bates)
                 
             if button_double:
                 progress_bar = st.progress(0)
@@ -796,9 +805,10 @@ def show_excel_processor():
                 graph_heston_vs_price(Price, Price_Double)
                 IV_heston = [calculate_implied_volatility(Price_Double_iv[i], S0, K_h[i], r_m_d, T_h[i], 10**-6, "call") for i in range(len(T_h))]
                 graph_heston_vs_market_iv(IV_h, IV_heston)
+                plot_K_fair_volatility("Double", params_double)
 
 
-# In[91]:
+# In[104]:
 
 
 def surface_slider():
@@ -850,7 +860,7 @@ def surface_slider():
         st.pyplot(fig)
 
 
-# In[92]:
+# In[105]:
 
 
 def graph_heston_vs_price(Price, Price_Heston):
@@ -891,7 +901,7 @@ def graph_heston_vs_price(Price, Price_Heston):
     st.pyplot(fig)
 
 
-# In[93]:
+# In[106]:
 
 
 def calculate_implied_volatility(market_price, spot_price, strike_price, interest_rate, time_to_expiry, tolerance, option_type):
@@ -924,7 +934,7 @@ def calculate_implied_volatility(market_price, spot_price, strike_price, interes
     return volatility_guess
 
 
-# In[94]:
+# In[107]:
 
 
 def graph_heston_vs_market_iv(IV, IV_heston):
@@ -966,16 +976,39 @@ def graph_heston_vs_market_iv(IV, IV_heston):
     st.pyplot(fig)
 
 
-# In[95]:
+# In[117]:
 
 
-def K_fair(model, params, T):
-    if model=="Heston":
-        K_fair=params[2]+(params[1]-params[2])*(1-np.exp(-params[0]*T))/(params[0]*T)
-    elif model=="Double":
-        K_fair=params[2]+params[7]+(params[1]-params[2])*(1-np.exp(-params[0]*T))/(params[0]*T) + (params[6]-params[7])*(1-np.exp(-params[5]*T))/(params[5]*T)
-    elif model=="Bates":
-        K_fair=params[2]+(params[1]-params[2])*((1-np.exp(-params[0]*T))/(params[0]*T))+params[5]*(params[6]**2)
+def plot_K_fair_volatility(model, params):
+    sns.set(style="whitegrid")
+    T_values = np.linspace(0.1, 10, 100) 
+    volatilities = []
+
+    for T in T_values:
+        if model == "Heston":
+            K_fair = params[2] + (params[1] - params[2]) * (1 - np.exp(-params[0] * T)) / (params[0] * T)
+        elif model == "Double":
+            K_fair = params[2] + params[7] + (params[1] - params[2]) * (1 - np.exp(-params[0] * T)) / (params[0] * T) \
+                     + (params[6] - params[7]) * (1 - np.exp(-params[5] * T)) / (params[5] * T)
+        elif model == "Bates":
+            K_fair = params[2] + (params[1] - params[2]) * ((1 - np.exp(-params[0] * T)) / (params[0] * T)) \
+                     + params[5] * (params[6]**2)
+        volatility = np.sqrt(K_fair) * 100 
+        volatilities.append(volatility)
+
+    fig, ax = plt.subplots()
+    ax.plot(T_values, volatilities, linestyle='-', color='red', linewidth=2)
+    ax.set_title('Fair Strike for Volatility Swaps (%)')
+    ax.set_xlabel('Time to Maturity T')
+    ax.set_ylabel('Volatility (%)')
+    ax.grid(True, linestyle='--')
+    space1, col1, space2 = st.columns([1,4,1])
+    with space1:
+        pass
+    with col1:
+        st.pyplot(fig)
+    with space2:
+        pass
 
 
 # In[96]:
