@@ -6,3 +6,4 @@ scipy==1.9.2
 plotly==5.9.0
 ipywidgets==7.7.0
 openpyxl==3.0.10
+yfinance==0.2.33
