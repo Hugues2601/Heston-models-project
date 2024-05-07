@@ -861,7 +861,7 @@ def surface_slider():
         st.pyplot(fig)
 
 
-# In[62]:
+# In[64]:
 
 
 def mm():
@@ -926,7 +926,7 @@ def mm():
         c_o_p = st.selectbox('Type', ["Call", "Put"])
         
         if st.button("Compute Vanilla Bid and Ask"):
-            bid, ask = bid_and_ask(S0, params_ba, params_ba_d, params_ba_j, strike_price_v, maturity_years_v, r_m_d)
+            bid, ask = bid_and_ask(S0, params_ba, params_ba_d, params_ba_j, strike_price_v, maturity_years_v, r_m_d, c_o_p)
             # Displaying calculated bid and ask prices in a visually appealing way
             st.markdown(f"**Bid Price:** `{bid:.2f}`")
             st.markdown(f"**Ask Price:** `{ask:.2f}`")
@@ -949,10 +949,10 @@ def mm():
             st.markdown(f"**Fair Strike:** `{vol_strike:.2f}`%")
 
 
-# In[63]:
+# In[65]:
 
 
-def bid_and_ask(S0, params_ba, params_ba_d, params_ba_j, strike, maturity, r_m_d):
+def bid_and_ask(S0, params_ba, params_ba_d, params_ba_j, strike, maturity, r_m_d, c_o_p):
     price_h=heston_price(S0, strike, maturity, r_m_d, *params_ba)
     price_hj=bates_price(S0, strike, maturity, r_m_d, *params_ba_j)
     price_d=double_price(S0, strike, maturity, r_m_d, *params_ba_d)
