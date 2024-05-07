@@ -1017,12 +1017,12 @@ def bid_and_ask(S0, params_ba, params_ba_d, params_ba_j, strike, maturity, r_m_d
     return bid, ask
 
 
-# In[80]:
+# In[81]:
 
 
 def binary(S0, K, T, r, typ, params_ba):
     kappa, v0, theta, sigma, rho = params_ba
-    params = (S0, K, T, r, kappa, v0, theta, sigma, rho)
+    params = (S0, T, r, kappa, v0, theta, sigma, rho)
 
     P2 = 0.5  
     umax = 50
