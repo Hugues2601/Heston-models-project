@@ -832,7 +832,6 @@ def surface_slider():
         elevation = st.slider('Elevation', 0, 90, 30, 5)
         azimuth = st.slider('Azimuth', 0, 360, 120, 10)
 
-    # Model parameters
     initial_price = 100
     fixed_maturity = 1.0
     option_strikes = np.linspace(60, 150, 15) 
@@ -861,27 +860,23 @@ def surface_slider():
         st.pyplot(fig)
 
 
-# In[89]:
+# In[93]:
 
 
 def mm():
-    # Set up page title
+
     st.title("🏛️ Market Making")
     
     def load_excel(file):
         return pd.ExcelFile(file)
 
-    # Path to your Excel file
     file_path = 'market_data.xlsx'
     excel_file = load_excel(file_path)
 
-    # Get all the sheet names
     sheet_names = excel_file.sheet_names
 
-    # Sidebar dropdown to select the sheet
     sheet_to_use = st.selectbox('Choose an index', sheet_names)
 
-    # Read the selected sheet
     df = pd.read_excel(excel_file, sheet_name=sheet_to_use)
     
     S0 = df.iloc[2, 4]  
@@ -899,11 +894,18 @@ def mm():
         params_ba=[0.1376, 0.0227, 0.1103, 0.1375, -0.9824]
         params_ba_d=[6.223, 0.0001, 0.0115, 0.3783, -1, 0.0711, 0.0144, 0.1501, 0.1461, -1]
         params_ba_j=[0.0585, 0.0151, 0.1756, 0.1320, -1, 0.2761, -0.0617, 0.1929]
+    elif sheet_to_use=="SPX-2015":
+        params_ba=[0.0729, 0.0220, 0.2802, 0.2021, -1]
+        params_ba_d=[1.2763, 0.0197, 0.0432, 0.3321, -1, 0.0431, 0.0001, 0.1292, 0.0001, -0.7840]
+        params_ba_j=[0.0949, 0.0195, 0.1437, 0.1651, -0.8779, 0.0109, -4.2098, 1.4172]
+    elif sheet_to_use=="SPX-2014":
+        params_ba_d=[0.5303, 0.0156, 0.0437, 0.2153, -1, 0.0363, 0.0001, 0.0744, 0.0001, -0.9735]
+        params_ba_j=[0.1231, 0.0154, 0.1094, 0.1641, -0.9722, 0.0002, 1.0721, 1.9843]
+        params_ba=[0.1098, 0.0161, 0.1226, 0.1382, -1]
         
-    # Create three columns
+
     col1, col2, col3 = st.columns(3)
 
-    # Column 1: Binary Options
     with col1:
         st.header("1️⃣ Binary Options")
         
@@ -940,10 +942,9 @@ def mm():
             st.markdown(f"**Bid Price:** `{bid:.2f}`")
             st.markdown(f"**Ask Price:** `{ask:.2f}`")
             
-    # Column 2: Vanilla Option
+
     with col2:
         st.header("💶 European Options")
-        # Strike price input
         strike_price_v = st.number_input(
         "Strike Price:",
         min_value=0.0,
@@ -974,12 +975,10 @@ def mm():
             bid, ask = bid_and_ask(S0, params_ba, params_ba_d, params_ba_j, strike_price_v, maturity_years_v, r_m_d, c_o_p)
             bid*=size_v
             ask*=size_v
-            # Displaying calculated bid and ask prices in a visually appealing way
             st.markdown(f"**Bid Price:** `{bid:.2f}`")
             st.markdown(f"**Ask Price:** `{ask:.2f}`")
             
 
-    # Column 3: Swaps
     with col3:
         st.header("💱 Volatility Swaps")
         
