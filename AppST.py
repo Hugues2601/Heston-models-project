@@ -861,7 +861,7 @@ def surface_slider():
         st.pyplot(fig)
 
 
-# In[64]:
+# In[69]:
 
 
 def mm():
@@ -895,6 +895,10 @@ def mm():
         params_ba=[0.1391, 0.0275, 0.1824, 0.2187 , -0.9773]
         params_ba_d=[3.7861, 0.0001, 0.0111, 0.2900, -1, 0.0634, 0.0212, 0.2664, 0.1838, -1]
         params_ba_j=[0.0435, 0.0198, 0.4115, 0.1829, -0.9891, 0.0727, -0.4033, 0.0355]
+    elif sheet_to_use=="NDX-2014":
+        params_ba=[0.1376, 0.0227, 0.1103, 0.1375, -0.9824]
+        params_ba_d=[6.223, 0.0001, 0.0115, 0.3783, -1, 0.0711, 0.0144, 0.1501, 0.1461, -1]
+        params_ba_j=[0.0585, 0.0151, 0.1756, 0.1320, -1, 0.2761, -0.0617, 0.1929]
         
     # Create three columns
     col1, col2, col3 = st.columns(3)
@@ -902,6 +906,27 @@ def mm():
     # Column 1: Binary Options
     with col1:
         st.header("1️⃣ Binary Options")
+        
+        strike_price_v = st.number_input(
+        "Strike Price:",
+        min_value=0.0,
+        step=0.1,
+        format="%.2f",
+        key="strike 1"
+        )
+
+        maturity_years_v = st.number_input(
+        "Maturity (in years):",
+        min_value=0.0,
+        step=0.1,
+        format="%.1f",
+        key="tmt 1"
+        )
+        
+        c_o_p1 = st.selectbox('Type', ["Call", "Put"])
+        
+        if st.button("Compute Binary option price"):
+            pass
 
     # Column 2: Vanilla Option
     with col2:
@@ -910,7 +935,7 @@ def mm():
         strike_price_v = st.number_input(
         "Strike Price:",
         min_value=0.0,
-        step=0.1,
+        step=10,
         format="%.2f",
         key="strike vanilla"
         )
