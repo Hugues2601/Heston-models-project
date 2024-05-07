@@ -861,7 +861,7 @@ def surface_slider():
         st.pyplot(fig)
 
 
-# In[85]:
+# In[87]:
 
 
 def mm():
@@ -934,10 +934,12 @@ def mm():
         c_o_p1 = st.selectbox('Type', ["High", "Low"], key="cop 1")
         
         if st.button("Compute Binary Bid and Ask"):
-            b=binary(S0, strike_price_b, maturity_years_b, r_m_d, c_o_p1, params_ba)
-            price=b*size_b
-            st.markdown(f"**Bid Price:** `{price:.2f}`")
-
+            bid, ask=binary(S0, strike_price_b, maturity_years_b, r_m_d, c_o_p1, params_ba)
+            bid*=size_b
+            ask*=size_b
+            st.markdown(f"**Bid Price:** `{bid:.2f}`")
+            st.markdown(f"**Ask Price:** `{ask:.2f}`")
+            
     # Column 2: Vanilla Option
     with col2:
         st.header("🪙 Vanilla Option")
@@ -1018,7 +1020,7 @@ def bid_and_ask(S0, params_ba, params_ba_d, params_ba_j, strike, maturity, r_m_d
     return bid, ask
 
 
-# In[81]:
+# In[86]:
 
 
 def binary(S0, K, T, r, typ, params_ba):
@@ -1043,7 +1045,10 @@ def binary(S0, K, T, r, typ, params_ba):
         binary_price = np.exp(-r * T) * P2
     elif typ == 'Low':
         binary_price = np.exp(-r * T) * (1 - P2)
-    return binary_price
+    spread=0.02
+    bid=binary_price-spread/2
+    ask=binary_price+spread/2
+    return bid, ask
 
 
 # In[83]:
