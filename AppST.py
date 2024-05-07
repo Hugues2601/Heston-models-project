@@ -861,7 +861,7 @@ def surface_slider():
         st.pyplot(fig)
 
 
-# In[74]:
+# In[79]:
 
 
 def mm():
@@ -923,10 +923,20 @@ def mm():
         key="tmt 1"
         )
         
+        size_b = st.number_input(
+        "Contract size:",
+        min_value=1.0,
+        step=1.0,
+        format="%.1f",
+        key="size binary"
+        )
+        
         c_o_p1 = st.selectbox('Type', ["High", "Low"], key="cop 1")
         
-        if st.button("Compute Binary option price"):
-            pass
+        if st.button("Compute Binary Bid and Ask"):
+            b=binary(S0, strike_price_b, maturity_years_b, r_m_d, c_o_p1, params_ba)
+            price=b*size_b
+            st.markdown(f"**Bid Price:** `{price:.2f}`")
 
     # Column 2: Vanilla Option
     with col2:
@@ -1007,11 +1017,29 @@ def bid_and_ask(S0, params_ba, params_ba_d, params_ba_j, strike, maturity, r_m_d
     return bid, ask
 
 
-# In[ ]:
+# In[78]:
 
 
-def binary():
-    pass
+def binary(S0, K, T, r, typ, params_ba):
+    # We reuse the Heston model pricing function
+    params = (S0, K, T, r, *params_ba)
+    P2 = 0.5  # Initial P2
+    umax = 50
+    n = 100
+    du = umax / n
+    phi = du / 2
+    for i in range(n):
+        cf2 = heston_cf(phi, *params)
+        factor1 = np.exp(-1j * phi * np.log(K))
+        denominator = 1j * phi
+        temp2 = factor1 * cf2 / denominator
+        P2 += 1 / np.pi * np.real(temp2) * du
+        phi += du
+    if typ=='High':
+        binary_price = np.exp(-r * T) * P2
+    elif typ=='Low':
+        binary_price = np.exp(-r * T) * (1-P2)
+    return binary_price
 
 
 # In[57]:
