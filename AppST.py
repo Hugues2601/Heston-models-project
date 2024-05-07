@@ -861,7 +861,7 @@ def surface_slider():
         st.pyplot(fig)
 
 
-# In[79]:
+# In[85]:
 
 
 def mm():
@@ -990,8 +990,9 @@ def mm():
         )
         
         if st.button("Compute Swap Fair Strike"):
-            vol_strike=k_fair_mm("Double", params_ba_d, maturity_years_s)
-            st.markdown(f"**Fair Strike:** `{vol_strike:.2f}`%")
+            bid, ask=k_fair_mm(params_ba, params_ba_d, params_ba_j, maturity_years_s)
+            st.markdown(f"**Bid Fair Strike:** `{bid:.2f}`")
+            st.markdown(f"**Ask Fair Strike:** `{ask:.2f}`")
 
 
 # In[65]:
@@ -1045,20 +1046,24 @@ def binary(S0, K, T, r, typ, params_ba):
     return binary_price
 
 
-# In[57]:
+# In[83]:
 
 
-def k_fair_mm(model, params, params_ba, params_ba_d, params_ba_j, T):
-    if model == "Heston":
-        K_fair = params[2] + (params[1] - params[2]) * (1 - np.exp(-params[0] * T)) / (params[0] * T)
-    elif model == "Double":
-        K_fair = params[2] + params[7] + (params[1] - params[2]) * (1 - np.exp(-params[0] * T)) / (params[0] * T) \
-                 + (params[6] - params[7]) * (1 - np.exp(-params[5] * T)) / (params[5] * T)
-    elif model == "Bates":
-        K_fair = params[2] + (params[1] - params[2]) * ((1 - np.exp(-params[0] * T)) / (params[0] * T)) \
-                 + params[5] * (params[6]**2)
-    volatility = np.sqrt(K_fair) * 100
-    return volatility
+def k_fair_mm(params_ba, params_ba_d, params_ba_j, T):
+
+    K_fair_h = params_ba[2] + (params_ba[1] - params_ba[2]) * (1 - np.exp(-params_ba[0] * T)) / (params_ba[0] * T)
+
+    K_fair_d = params_ba_d[2] + params_ba_d[7] + (params_ba_d[1] - params_ba_d[2]) * (1 - np.exp(-params_ba_d[0] * T)) / (params_ba_d[0] * T) \
+                 + (params_ba_d[6] - params_ba_d[7]) * (1 - np.exp(-params_ba_d[5] * T)) / (params_ba_d[5] * T)
+        
+    K_fair_j = params_ba_j[2] + (params_ba_j[1] - params_ba_j[2]) * ((1 - np.exp(-params_ba_j[0] * T)) / (params_ba_j[0] * T)) \
+                 + params_ba_j[5] * (params_ba_j[6]**2)
+    vol_h = np.sqrt(K_fair_h) * 100
+    vol_d = np.sqrt(K_fair_d) * 100
+    vol_j = np.sqrt(K_fair_j) * 100
+    vol_min=min(vol_h, vol_d, vol_j)
+    vol_max=max(vol_h, vol_d, vol_j)
+    return vol_min, vol_max
 
 
 # In[58]:
