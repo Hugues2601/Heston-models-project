@@ -861,7 +861,7 @@ def surface_slider():
         st.pyplot(fig)
 
 
-# In[73]:
+# In[74]:
 
 
 def mm():
@@ -959,7 +959,9 @@ def mm():
         c_o_p = st.selectbox('Type', ["Call", "Put"], key="cop v")
         
         if st.button("Compute Vanilla Bid and Ask"):
-            bid, ask = size_v*bid_and_ask(S0, params_ba, params_ba_d, params_ba_j, strike_price_v, maturity_years_v, r_m_d, c_o_p)
+            bid, ask = bid_and_ask(S0, params_ba, params_ba_d, params_ba_j, strike_price_v, maturity_years_v, r_m_d, c_o_p)
+            bid*=size_v
+            ask*=size_v
             # Displaying calculated bid and ask prices in a visually appealing way
             st.markdown(f"**Bid Price:** `{bid:.2f}`")
             st.markdown(f"**Ask Price:** `{ask:.2f}`")
