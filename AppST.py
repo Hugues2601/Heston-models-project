@@ -861,7 +861,7 @@ def surface_slider():
         st.pyplot(fig)
 
 
-# In[72]:
+# In[73]:
 
 
 def mm():
@@ -923,7 +923,7 @@ def mm():
         key="tmt 1"
         )
         
-        c_o_p1 = st.selectbox('Type', ["Call", "Put"], key="cop 1")
+        c_o_p1 = st.selectbox('Type', ["High", "Low"], key="cop 1")
         
         if st.button("Compute Binary option price"):
             pass
@@ -948,10 +948,18 @@ def mm():
         key="tmt vanilla"
         )
         
+        size_v = st.number_input(
+        "Contract size:",
+        min_value=1.0,
+        step=1.0,
+        format="%.1f",
+        key="size vanilla"
+        )
+        
         c_o_p = st.selectbox('Type', ["Call", "Put"], key="cop v")
         
         if st.button("Compute Vanilla Bid and Ask"):
-            bid, ask = bid_and_ask(S0, params_ba, params_ba_d, params_ba_j, strike_price_v, maturity_years_v, r_m_d, c_o_p)
+            bid, ask = size_v*bid_and_ask(S0, params_ba, params_ba_d, params_ba_j, strike_price_v, maturity_years_v, r_m_d, c_o_p)
             # Displaying calculated bid and ask prices in a visually appealing way
             st.markdown(f"**Bid Price:** `{bid:.2f}`")
             st.markdown(f"**Ask Price:** `{ask:.2f}`")
@@ -995,6 +1003,13 @@ def bid_and_ask(S0, params_ba, params_ba_d, params_ba_j, strike, maturity, r_m_d
     bid=min_p
     ask=max_p
     return bid, ask
+
+
+# In[ ]:
+
+
+def binary():
+    pass
 
 
 # In[57]:
