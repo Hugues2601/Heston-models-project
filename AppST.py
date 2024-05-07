@@ -861,7 +861,7 @@ def surface_slider():
         st.pyplot(fig)
 
 
-# In[55]:
+# In[59]:
 
 
 def mm():
@@ -888,9 +888,7 @@ def mm():
     r = df.iloc[0, 10]  
     d = df.iloc[1, 10]
     r_m_d = r - d
-    st.write("Spot Price (S0):", S0)
-    st.write("Risk-Free Rate:", r)
-    st.write("Dividend Rate:", d)
+    st.write(f"Spot Price (S0): {S0} | Risk-Free Rate: {r} | Dividend Rate: {d}")
 
     
     if sheet_to_use=="NDX-2015":
@@ -967,7 +965,7 @@ def bid_and_ask(S0, params_ba, params_ba_d, params_ba_j, strike, maturity, r_m_d
 # In[57]:
 
 
-def k_fair_mm(model, params, T):
+def k_fair_mm(model, params, params_ba, params_ba_d, params_ba_j, T):
     if model == "Heston":
         K_fair = params[2] + (params[1] - params[2]) * (1 - np.exp(-params[0] * T)) / (params[0] * T)
     elif model == "Double":
