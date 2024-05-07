@@ -1050,7 +1050,7 @@ def binary(S0, K, T, r, typ, params_ba):
     return bid, ask
 
 
-# In[83]:
+# In[96]:
 
 
 def k_fair_mm(params_ba, params_ba_d, params_ba_j, T):
@@ -1061,7 +1061,7 @@ def k_fair_mm(params_ba, params_ba_d, params_ba_j, T):
                  + (params_ba_d[6] - params_ba_d[7]) * (1 - np.exp(-params_ba_d[5] * T)) / (params_ba_d[5] * T)
         
     K_fair_j = params_ba_j[2] + (params_ba_j[1] - params_ba_j[2]) * ((1 - np.exp(-params_ba_j[0] * T)) / (params_ba_j[0] * T)) \
-                 + params_ba_j[5] * (params_ba_j[6]**2)
+                 + params_ba_j[5] * (params_ba_j[6]**2+params_ba_j[7]**2)
     vol_h = np.sqrt(K_fair_h) * 100
     vol_d = np.sqrt(K_fair_d) * 100
     vol_j = np.sqrt(K_fair_j) * 100
