@@ -861,7 +861,7 @@ def surface_slider():
         st.pyplot(fig)
 
 
-# In[88]:
+# In[89]:
 
 
 def mm():
@@ -942,7 +942,7 @@ def mm():
             
     # Column 2: Vanilla Option
     with col2:
-        st.header("🪙 Vanilla Option")
+        st.header("💶 European Options")
         # Strike price input
         strike_price_v = st.number_input(
         "Strike Price:",
@@ -997,7 +997,7 @@ def mm():
             st.markdown(f"**Ask Fair Strike:** `{ask:.2f}`%")
 
 
-# In[65]:
+# In[90]:
 
 
 def bid_and_ask(S0, params_ba, params_ba_d, params_ba_j, strike, maturity, r_m_d, c_o_p):
@@ -1020,7 +1020,7 @@ def bid_and_ask(S0, params_ba, params_ba_d, params_ba_j, strike, maturity, r_m_d
     return bid, ask
 
 
-# In[86]:
+# In[91]:
 
 
 def binary(S0, K, T, r, typ, params_ba):
