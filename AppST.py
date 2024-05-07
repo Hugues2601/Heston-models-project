@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[72]:
+# In[2]:
 
 
 import streamlit as st
@@ -58,14 +58,15 @@ page = st.sidebar.radio(
         ('📉 Bates Model', 'Bates Model'),
         ('📈 Double Heston Model', 'Double Heston Model'),
         ('⚙️ Calibrator with Excel', 'Calibrator with Excel'),
-        ('🎚️ Surface Slider', 'Surface Slider')
+        ('🎚️ Surface Slider', 'Surface Slider'),
+        ('⚖️ Market Making', 'Market Making')
     ],
     index=0, 
     format_func=lambda x: x[0]
 )
 
 
-# In[73]:
+# In[3]:
 
 
 st.markdown("""
@@ -87,7 +88,7 @@ div.stButton > button:first-child {
 """, unsafe_allow_html=True)
 
 
-# In[74]:
+# In[4]:
 
 
 import numpy as np
@@ -108,7 +109,7 @@ import yfinance as yf
 from datetime import datetime
 
 
-# In[75]:
+# In[5]:
 
 
 def callback_func(xk, progress_bar, max_iter):
@@ -120,7 +121,7 @@ def callback_func(xk, progress_bar, max_iter):
 
 # ### Black-Scholes
 
-# In[76]:
+# In[6]:
 
 
 def CallBS(S, sigma, K, T, r):
@@ -133,7 +134,7 @@ def CallBS(S, sigma, K, T, r):
     return price
 
 
-# In[77]:
+# In[7]:
 
 
 def black_scholes(S, sigma, K, T, r, option_type='call'):
@@ -153,7 +154,7 @@ def black_scholes(S, sigma, K, T, r, option_type='call'):
 
 # ### Heston basic model
 
-# In[78]:
+# In[8]:
 
 
 def heston_cf(phi, S0, T, r, kappa, v0, theta, sigma, rho):
@@ -167,7 +168,7 @@ def heston_cf(phi, S0, T, r, kappa, v0, theta, sigma, rho):
     return cf
 
 
-# In[79]:
+# In[9]:
 
 
 def heston_price(S0, K, T, r, kappa, v0, theta, sigma, rho):
@@ -192,7 +193,7 @@ def heston_price(S0, K, T, r, kappa, v0, theta, sigma, rho):
     return price
 
 
-# In[80]:
+# In[10]:
 
 
 if 'calibrated' not in st.session_state:
@@ -205,7 +206,7 @@ if 'double_calibrated' not in st.session_state:
 
 # ### Bates Model
 
-# In[81]:
+# In[11]:
 
 
 import numpy as np
@@ -223,7 +224,7 @@ def bates_cf(phi, S0, T, r, kappa, v0, theta, sigma, rho, lambda_, mu_J, delta_J
     return cf
 
 
-# In[82]:
+# In[12]:
 
 
 def bates_price(S0, K, T, r, kappa, v0, theta, sigma, rho, lambda_, mu_J, delta_J):
@@ -255,7 +256,7 @@ def bates_price(S0, K, T, r, kappa, v0, theta, sigma, rho, lambda_, mu_J, delta_
 
 # ### Double Heston
 
-# In[83]:
+# In[13]:
 
 
 def heston_double_cf_v2(u, S0, T, r, kappa1, v01, theta1, sigma1, rho1, kappa2, v02, theta2, sigma2, rho2):
@@ -290,7 +291,7 @@ def heston_double_cf_v2(u, S0, T, r, kappa1, v01, theta1, sigma1, rho1, kappa2, 
     return psy
 
 
-# In[84]:
+# In[14]:
 
 
 def double_price(S0, K, T, r, kappa1, v01, theta1, sigma1, rho1, kappa2, v02, theta2, sigma2, rho2):
@@ -317,14 +318,14 @@ def double_price(S0, K, T, r, kappa1, v01, theta1, sigma1, rho1, kappa2, v02, th
 
 # ### App
 
-# In[85]:
+# In[15]:
 
 
 # Title of the app
 st.title("")
 
 
-# In[86]:
+# In[16]:
 
 
 def show_home():
@@ -355,7 +356,7 @@ dv_t &= \kappa (\theta - v_t) \, dt + \sigma \sqrt{v_t} \, dW_t^{(2)}, \\
         st.write(f"The Heston model price is: ${price:.2f}")
 
 
-# In[100]:
+# In[17]:
 
 
 def show_second_page():
@@ -389,7 +390,7 @@ dv_t &= \kappa (\theta - v_t) \, dt + \sigma \sqrt{v_t} \, dW_t^{(2)}, \\
         st.write(f"The Bates model price is: ${price:.2f}")
 
 
-# In[88]:
+# In[18]:
 
 
 def Double_model_page():
@@ -428,7 +429,7 @@ dv_{2,t} &= \kappa_2 (\theta_2 - v_{2,t}) \, dt + \sigma_2 \sqrt{v_{2,t}} \, dZ_
         st.write(f"The Double model price is: ${price:.2f}")
 
 
-# In[89]:
+# In[19]:
 
 
 def show_black_scholes():
@@ -456,7 +457,7 @@ def show_black_scholes():
         st.write(f"The {option_type} option price is: ${price:.2f}")
 
 
-# In[103]:
+# In[20]:
 
 
 def show_excel_processor():
@@ -808,7 +809,7 @@ def show_excel_processor():
                 plot_K_fair_volatility("Double", params_double)
 
 
-# In[104]:
+# In[21]:
 
 
 def surface_slider():
@@ -860,7 +861,126 @@ def surface_slider():
         st.pyplot(fig)
 
 
-# In[105]:
+# In[50]:
+
+
+def mm():
+    # Set up page title
+    st.title("🏛️ Market Making")
+    
+    def load_excel(file):
+        return pd.ExcelFile(file)
+
+    # Path to your Excel file
+    file_path = 'market_data.xlsx'
+    excel_file = load_excel(file_path)
+
+    # Get all the sheet names
+    sheet_names = excel_file.sheet_names
+
+    # Sidebar dropdown to select the sheet
+    sheet_to_use = st.selectbox('Choose a sheet', sheet_names)
+
+    # Read the selected sheet
+    df = pd.read_excel(excel_file, sheet_name=sheet_to_use)
+    
+    S0 = df.iloc[2, 4]  
+    r = df.iloc[0, 10]  
+    d = df.iloc[1, 10]
+    r_m_d = r - d
+    st.write("Spot Price (S0):", S0)
+    st.write("Risk-Free Rate:", r)
+    st.write("Dividend Rate:", d)
+
+    
+    if sheet_to_use=="NDX-2015":
+        params_ba=[0.1391, 0.0275, 0.1824, 0.2187 , -0.9773]
+        params_ba_d=[3.7861, 0.0001, 0.0111, 0.2900, -1, 0.0634, 0.0212, 0.2664, 0.1838, -1]
+        params_ba_j=[0.0435, 0.0198, 0.4115, 0.1829, -0.9891, 0.0727, -0.4033, 0.0355]
+        
+    # Create three columns
+    col1, col2, col3 = st.columns(3)
+
+    # Column 1: Binary Options
+    with col1:
+        st.header("1️⃣ Binary Options")
+        st.write("""
+            Binary options are financial options in which the payoff is either a fixed amount or nothing at all.
+            Some common types include high-low options and range options.
+        """)
+
+    # Column 2: Vanilla Option
+    with col2:
+        st.header("🪙 Vanilla Option")
+        # Strike price input
+        strike_price_v = st.number_input(
+        "Strike Price:",
+        min_value=0.0,
+        step=0.1,
+        format="%.2f",
+        key="strike vanilla"
+        )
+
+        maturity_years_v = st.number_input(
+        "Maturity (in years):",
+        min_value=0.0,
+        step=0.1,
+        format="%.1f",
+        key="tmt vanilla"
+        )
+        
+        if st.button("Compute Vanilla Bid and Ask"):
+            bid, ask = bid_and_ask(S0, params_ba, strike_price_v, maturity_years_v, r_m_d)
+            # Displaying calculated bid and ask prices in a visually appealing way
+            st.markdown(f"**Bid Price:** `{bid:.2f}`")
+            st.markdown(f"**Ask Price:** `{ask:.2f}`")
+            
+
+    # Column 3: Swaps
+    with col3:
+        st.header("💱 Swaps")
+        
+        maturity_years_s = st.number_input(
+        "Maturity (in years):",
+        min_value=0.0,
+        step=0.1,
+        format="%.1f",
+        key="tmt swap"
+        )
+        
+        if st.button("Compute Swap Fair Strike"):
+            vol_strike=k_fair_mm("Double", params_ba_d, maturity_years_s)
+            st.markdown(f"**Fair Strike:** `{vol_strike:.2f}`%")
+
+
+# In[43]:
+
+
+def bid_and_ask(S0, params_ba, strike, maturity, r_m_d):
+    price=heston_price(S0, strike, maturity, r_m_d, *params_ba)
+    spread=0.01
+    bid=price-spread/2*price
+    ask=price+spread/2*price
+    return bid, ask
+
+
+# In[48]:
+
+
+def k_fair_mm(model, params, T):
+    if model == "Heston":
+        K_fair = params[2] + (params[1] - params[2]) * (1 - np.exp(-params[0] * T)) / (params[0] * T)
+    elif model == "Double":
+        K_fair = params[2] + params[7] + (params[1] - params[2]) * (1 - np.exp(-params[0] * T)) / (params[0] * T) \
+                 + (params[6] - params[7]) * (1 - np.exp(-params[5] * T)) / (params[5] * T)
+    elif model == "Bates":
+        K_fair = params[2] + (params[1] - params[2]) * ((1 - np.exp(-params[0] * T)) / (params[0] * T)) \
+                 + params[5] * (params[6]**2)
+    volatility = np.sqrt(K_fair) * 100
+    return volatility
+
+
+# In[23]:
 
 
 def graph_heston_vs_price(Price, Price_Heston):
@@ -901,7 +1021,7 @@ def graph_heston_vs_price(Price, Price_Heston):
     st.pyplot(fig)
 
 
-# In[106]:
+# In[24]:
 
 
 def calculate_implied_volatility(market_price, spot_price, strike_price, interest_rate, time_to_expiry, tolerance, option_type):
@@ -934,7 +1054,7 @@ def calculate_implied_volatility(market_price, spot_price, strike_price, interes
     return volatility_guess
 
 
-# In[107]:
+# In[25]:
 
 
 def graph_heston_vs_market_iv(IV, IV_heston):
@@ -976,7 +1096,7 @@ def graph_heston_vs_market_iv(IV, IV_heston):
     st.pyplot(fig)
 
 
-# In[117]:
+# In[26]:
 
 
 def plot_K_fair_volatility(model, params):
@@ -1011,7 +1131,7 @@ def plot_K_fair_volatility(model, params):
         pass
 
 
-# In[96]:
+# In[27]:
 
 
 if page[1] == 'Basic Heston Model':
@@ -1026,4 +1146,12 @@ elif page[1] == 'Double Heston Model':
     Double_model_page()
 elif page[1] == 'Surface Slider':
     surface_slider()
+elif page[1] == 'Market Making':
+    mm()
+
+
+# In[ ]:
+
+
+
 
