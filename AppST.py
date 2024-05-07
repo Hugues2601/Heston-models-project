@@ -861,7 +861,7 @@ def surface_slider():
         st.pyplot(fig)
 
 
-# In[69]:
+# In[70]:
 
 
 def mm():
@@ -907,7 +907,7 @@ def mm():
     with col1:
         st.header("1️⃣ Binary Options")
         
-        strike_price_v = st.number_input(
+        strike_price_b = st.number_input(
         "Strike Price:",
         min_value=0.0,
         step=0.1,
@@ -915,7 +915,7 @@ def mm():
         key="strike 1"
         )
 
-        maturity_years_v = st.number_input(
+        maturity_years_b = st.number_input(
         "Maturity (in years):",
         min_value=0.0,
         step=0.1,
