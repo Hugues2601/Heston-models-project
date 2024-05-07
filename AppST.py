@@ -861,7 +861,7 @@ def surface_slider():
         st.pyplot(fig)
 
 
-# In[71]:
+# In[72]:
 
 
 def mm():
@@ -923,7 +923,7 @@ def mm():
         key="tmt 1"
         )
         
-        c_o_p1 = st.selectbox('Type', ["Call", "Put"])
+        c_o_p1 = st.selectbox('Type', ["Call", "Put"], key="cop 1")
         
         if st.button("Compute Binary option price"):
             pass
@@ -948,7 +948,7 @@ def mm():
         key="tmt vanilla"
         )
         
-        c_o_p = st.selectbox('Type', ["Call", "Put"])
+        c_o_p = st.selectbox('Type', ["Call", "Put"], key="cop v")
         
         if st.button("Compute Vanilla Bid and Ask"):
             bid, ask = bid_and_ask(S0, params_ba, params_ba_d, params_ba_j, strike_price_v, maturity_years_v, r_m_d, c_o_p)
