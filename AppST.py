@@ -861,7 +861,7 @@ def surface_slider():
         st.pyplot(fig)
 
 
-# In[87]:
+# In[88]:
 
 
 def mm():
@@ -917,7 +917,7 @@ def mm():
 
         maturity_years_b = st.number_input(
         "Maturity (in years):",
-        min_value=0.0,
+        min_value=0.1,
         step=0.1,
         format="%.1f",
         key="tmt 1"
@@ -954,7 +954,7 @@ def mm():
 
         maturity_years_v = st.number_input(
         "Maturity (in years):",
-        min_value=0.0,
+        min_value=0.1,
         step=0.1,
         format="%.1f",
         key="tmt vanilla"
@@ -985,7 +985,7 @@ def mm():
         
         maturity_years_s = st.number_input(
         "Maturity (in years):",
-        min_value=0.0,
+        min_value=0.1,
         step=0.1,
         format="%.1f",
         key="tmt swap"
@@ -993,8 +993,8 @@ def mm():
         
         if st.button("Compute Swap Fair Strike"):
             bid, ask=k_fair_mm(params_ba, params_ba_d, params_ba_j, maturity_years_s)
-            st.markdown(f"**Bid Fair Strike:** `{bid:.2f}`")
-            st.markdown(f"**Ask Fair Strike:** `{ask:.2f}`")
+            st.markdown(f"**Bid Fair Strike:** `{bid:.2f}`%")
+            st.markdown(f"**Ask Fair Strike:** `{ask:.2f}`%")
 
 
 # In[65]:
