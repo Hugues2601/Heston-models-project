@@ -1017,17 +1017,19 @@ def bid_and_ask(S0, params_ba, params_ba_d, params_ba_j, strike, maturity, r_m_d
     return bid, ask
 
 
-# In[78]:
+# In[80]:
 
 
 def binary(S0, K, T, r, typ, params_ba):
-    # We reuse the Heston model pricing function
-    params = (S0, K, T, r, *params_ba)
-    P2 = 0.5  # Initial P2
+    kappa, v0, theta, sigma, rho = params_ba
+    params = (S0, K, T, r, kappa, v0, theta, sigma, rho)
+
+    P2 = 0.5  
     umax = 50
     n = 100
     du = umax / n
     phi = du / 2
+
     for i in range(n):
         cf2 = heston_cf(phi, *params)
         factor1 = np.exp(-1j * phi * np.log(K))
@@ -1035,10 +1037,11 @@ def binary(S0, K, T, r, typ, params_ba):
         temp2 = factor1 * cf2 / denominator
         P2 += 1 / np.pi * np.real(temp2) * du
         phi += du
-    if typ=='High':
+
+    if typ == 'High':
         binary_price = np.exp(-r * T) * P2
-    elif typ=='Low':
-        binary_price = np.exp(-r * T) * (1-P2)
+    elif typ == 'Low':
+        binary_price = np.exp(-r * T) * (1 - P2)
     return binary_price
 
 
