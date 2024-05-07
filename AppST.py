@@ -861,7 +861,7 @@ def surface_slider():
         st.pyplot(fig)
 
 
-# In[70]:
+# In[71]:
 
 
 def mm():
@@ -935,7 +935,7 @@ def mm():
         strike_price_v = st.number_input(
         "Strike Price:",
         min_value=0.0,
-        step=10,
+        step=0.1,
         format="%.2f",
         key="strike vanilla"
         )
