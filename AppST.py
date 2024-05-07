@@ -861,7 +861,7 @@ def surface_slider():
         st.pyplot(fig)
 
 
-# In[59]:
+# In[62]:
 
 
 def mm():
@@ -923,6 +923,8 @@ def mm():
         key="tmt vanilla"
         )
         
+        c_o_p = st.selectbox('Type', ["Call", "Put"])
+        
         if st.button("Compute Vanilla Bid and Ask"):
             bid, ask = bid_and_ask(S0, params_ba, params_ba_d, params_ba_j, strike_price_v, maturity_years_v, r_m_d)
             # Displaying calculated bid and ask prices in a visually appealing way
@@ -947,13 +949,21 @@ def mm():
             st.markdown(f"**Fair Strike:** `{vol_strike:.2f}`%")
 
 
-# In[56]:
+# In[63]:
 
 
 def bid_and_ask(S0, params_ba, params_ba_d, params_ba_j, strike, maturity, r_m_d):
     price_h=heston_price(S0, strike, maturity, r_m_d, *params_ba)
     price_hj=bates_price(S0, strike, maturity, r_m_d, *params_ba_j)
     price_d=double_price(S0, strike, maturity, r_m_d, *params_ba_d)
+    
+    if c_o_p=="Put":
+        price_h=price_h-S0+strike*np.exp(-r_m_d*maturity)
+        price_hj=price_hj-S0+strike*np.exp(-r_m_d*maturity)
+        price_d=price_d-S0+strike*np.exp(-r_m_d*maturity)
+    else:
+        pass
+    
     min_p=min(price_h, price_hj, price_d)
     max_p=max(price_h, price_hj, price_d)
     spread=0.01
