@@ -861,7 +861,7 @@ def surface_slider():
         st.pyplot(fig)
 
 
-# In[50]:
+# In[55]:
 
 
 def mm():
@@ -879,7 +879,7 @@ def mm():
     sheet_names = excel_file.sheet_names
 
     # Sidebar dropdown to select the sheet
-    sheet_to_use = st.selectbox('Choose a sheet', sheet_names)
+    sheet_to_use = st.selectbox('Choose an index', sheet_names)
 
     # Read the selected sheet
     df = pd.read_excel(excel_file, sheet_name=sheet_to_use)
@@ -904,10 +904,6 @@ def mm():
     # Column 1: Binary Options
     with col1:
         st.header("1️⃣ Binary Options")
-        st.write("""
-            Binary options are financial options in which the payoff is either a fixed amount or nothing at all.
-            Some common types include high-low options and range options.
-        """)
 
     # Column 2: Vanilla Option
     with col2:
@@ -930,7 +926,7 @@ def mm():
         )
         
         if st.button("Compute Vanilla Bid and Ask"):
-            bid, ask = bid_and_ask(S0, params_ba, strike_price_v, maturity_years_v, r_m_d)
+            bid, ask = bid_and_ask(S0, params_ba, params_ba_d, params_ba_j, strike_price_v, maturity_years_v, r_m_d)
             # Displaying calculated bid and ask prices in a visually appealing way
             st.markdown(f"**Bid Price:** `{bid:.2f}`")
             st.markdown(f"**Ask Price:** `{ask:.2f}`")
@@ -938,7 +934,7 @@ def mm():
 
     # Column 3: Swaps
     with col3:
-        st.header("💱 Swaps")
+        st.header("💱 Volatility Swaps")
         
         maturity_years_s = st.number_input(
         "Maturity (in years):",
@@ -953,18 +949,22 @@ def mm():
             st.markdown(f"**Fair Strike:** `{vol_strike:.2f}`%")
 
 
-# In[43]:
+# In[56]:
 
 
-def bid_and_ask(S0, params_ba, strike, maturity, r_m_d):
-    price=heston_price(S0, strike, maturity, r_m_d, *params_ba)
+def bid_and_ask(S0, params_ba, params_ba_d, params_ba_j, strike, maturity, r_m_d):
+    price_h=heston_price(S0, strike, maturity, r_m_d, *params_ba)
+    price_hj=bates_price(S0, strike, maturity, r_m_d, *params_ba_j)
+    price_d=double_price(S0, strike, maturity, r_m_d, *params_ba_d)
+    min_p=min(price_h, price_hj, price_d)
+    max_p=max(price_h, price_hj, price_d)
     spread=0.01
-    bid=price-spread/2*price
-    ask=price+spread/2*price
+    bid=min_p
+    ask=max_p
     return bid, ask
 
 
-# In[48]:
+# In[57]:
 
 
 def k_fair_mm(model, params, T):
@@ -980,7 +980,7 @@ def k_fair_mm(model, params, T):
     return volatility
 
 
-# In[23]:
+# In[58]:
 
 
 def graph_heston_vs_price(Price, Price_Heston):
